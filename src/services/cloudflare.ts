@@ -1,5 +1,8 @@
 import type { Response } from 'node-fetch'
 import fetch from 'node-fetch'
+import type CloudflareDnsRecord from '../types/CloudflareDnsRecord.d'
+import type CloudflareZoneListResponse from '../types/CloudflareResponse'
+import type CloudflareZone from '../types/CloudflareZone.d'
 
 /**
  * Verify an API token with Cloudflare.
@@ -9,6 +12,35 @@ import fetch from 'node-fetch'
  * @returns {Promise<boolean>} - Whether the token is valid.
  */
 export const verifyToken = async (token: string): Promise<boolean> => (await request(token, 'GET', 'user/tokens/verify')).ok
+
+/**
+ * Get all zones from Cloudflare.
+ *
+ * @param {string} token - The API token to use.
+ *
+ * @returns {Promise<object[]>} - The zones.
+ */
+export const getZones = async (token: string): Promise<CloudflareZone[]> => {
+  const response = await request(token, 'GET', 'zones')
+  if (!response.ok) throw new Error('Failed to get zones from Cloudflare.')
+
+  const zoneResponse = (await response.json()) as CloudflareZoneListResponse<CloudflareZone[]>
+  return zoneResponse.result
+}
+
+/**
+ * Get all DNS records for a zone from Cloudflare.
+ *
+ * @param {string} token - The API token to use.
+ * @param {string} zoneId - The zone ID to use.
+ */
+export const getRecords = async (token: string, zoneId: string): Promise<CloudflareDnsRecord[]> => {
+  const response = await request(token, 'GET', `zones/${zoneId}/dns_records`)
+  if (!response.ok) throw new Error('Failed to get DNS records from Cloudflare.')
+
+  const recordResponse = (await response.json()) as CloudflareZoneListResponse<CloudflareDnsRecord[]>
+  return recordResponse.result
+}
 
 /**
  * Send authenticated requests to the Cloudflare API.

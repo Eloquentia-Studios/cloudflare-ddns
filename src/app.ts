@@ -1,5 +1,5 @@
 import { config } from 'dotenv'
-import { verifyToken } from './services/cloudflare.js'
+import { getRecords, getZones, verifyToken } from './services/cloudflare.js'
 config()
 
 // Get the API key from the environment variables.
@@ -14,6 +14,16 @@ const valid = await verifyToken(API_KEY)
 if (!valid) {
   console.error('Invalid Cloudflare API key.')
   process.exit(1)
+}
+
+// Get all zones.
+const zones = await getZones(API_KEY)
+console.log(`Available Zones:\n${zones.map((zone) => zone.name).join(', ')}`)
+
+// Get all DNS records.
+for (const zone of zones) {
+  const records = await getRecords(API_KEY, zone.id)
+  console.log(`\n${zone.name}:\n${records.map((record) => `- ${record.name} : ${record.content}`).join('\n')}`)
 }
 
 console.log('Welcome to Cloudflare DDNS!')
