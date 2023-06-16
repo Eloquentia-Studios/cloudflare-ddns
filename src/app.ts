@@ -1,4 +1,5 @@
 import { config } from 'dotenv'
+import getPublicIP from './libs/getPublicIP.js'
 import { getRecords, getZones, verifyToken } from './services/cloudflare.js'
 config()
 
@@ -25,5 +26,9 @@ for (const zone of zones) {
   const records = await getRecords(API_KEY, zone.id)
   console.log(`\n${zone.name}:\n${records.map((record) => `- ${record.name} : ${record.content}`).join('\n')}`)
 }
+
+// Get the public IP address.
+const ip = await getPublicIP()
+console.log(`\nPublic IP: ${ip}`)
 
 console.log('Welcome to Cloudflare DDNS!')
