@@ -1,8 +1,12 @@
 <script lang="ts">
-  import Header from '../components/Header.svelte'
+  import ZoneList from '../components/ZoneList.svelte'
 </script>
 
-<Header />
+<h2>Zones</h2>
+<ZoneList />
 
 <style>
+  h2 {
+    margin-bottom: 1rem;
+  }
 </style>
