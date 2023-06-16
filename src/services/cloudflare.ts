@@ -43,6 +43,24 @@ export const getRecords = async (token: string, zoneId: string): Promise<Cloudfl
 }
 
 /**
+ * Get all Cloudflare data.
+ *
+ * @param {string} token - The API token to use.
+ *
+ * @returns {Promise<object>} - The Cloudflare data.
+ */
+export const getCloudflareData = async (token: string): Promise<object> => {
+  const zones = await getZones(token)
+
+  const records: CloudflareDnsRecord[] = []
+  for (const zone of zones) {
+    records.push(...(await getRecords(token, zone.id)))
+  }
+
+  return { zones, records }
+}
+
+/**
  * Send authenticated requests to the Cloudflare API.
  *
  * @param {string} token - The API token to use.

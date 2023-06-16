@@ -1,6 +1,6 @@
 import { config } from 'dotenv'
 import getPublicIP from './libs/getPublicIP.js'
-import { getRecords, getZones, verifyToken } from './services/cloudflare.js'
+import { getCloudflareData, verifyToken } from './services/cloudflare.js'
 config()
 
 // Get the API key from the environment variables.
@@ -17,18 +17,8 @@ if (!valid) {
   process.exit(1)
 }
 
-// Get all zones.
-const zones = await getZones(API_KEY)
-console.log(`Available Zones:\n${zones.map((zone) => zone.name).join(', ')}`)
-
-// Get all DNS records.
-for (const zone of zones) {
-  const records = await getRecords(API_KEY, zone.id)
-  console.log(`\n${zone.name}:\n${records.map((record) => `- ${record.name} : ${record.content}`).join('\n')}`)
-}
-
-// Get the public IP address.
-const ip = await getPublicIP()
-console.log(`\nPublic IP: ${ip}`)
+// Get all Cloudflare data.
+let cloudflareData = await getCloudflareData(API_KEY)
+let ip = await getPublicIP()
 
 console.log('Welcome to Cloudflare DDNS!')
