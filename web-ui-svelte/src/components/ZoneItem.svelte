@@ -1,17 +1,34 @@
-<div class="container">
-  <p id="id">098rfs7438789879877983879xxxxxxx</p>
-  <p id="name">example.com</p>
-  <p id="records">15 record(s)</p>
-</div>
+<script lang="ts">
+  let zone: {
+    id: string
+    name: string
+    records: number
+  } = {
+    id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+    name: 'example.com',
+    records: Math.floor(Math.random() * 100)
+  }
+</script>
+
+<a class="container" href="./{zone.id}/">
+  <div class="info">
+    <p id="id">{zone.id}</p>
+    <p id="name">{zone.name}</p>
+    <p id="records">{zone.records} record(s)</p>
+  </div>
+  <div class="arrow" />
+</a>
 
 <style>
   .container {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: start;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
 
     box-shadow: 0 0 0.5rem 0.25rem rgba(0, 0, 0, 0.05);
+    border-radius: 0.25rem;
     padding: 1rem;
     cursor: pointer;
 
@@ -33,5 +50,20 @@
 
   #records {
     font-size: 0.7rem;
+  }
+
+  .arrow {
+    width: 0;
+    height: 0;
+    border-top: 0.5rem solid transparent;
+    border-bottom: 0.5rem solid transparent;
+
+    border-left: 0.5rem solid #eee;
+
+    transition: border-left 0.2s ease-in-out;
+  }
+
+  .container:hover .arrow {
+    border-left: 0.5rem solid #bbb;
   }
 </style>

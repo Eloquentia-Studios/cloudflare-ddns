@@ -10,11 +10,9 @@
 
 <style>
   .container {
-    display: flex;
-    flex-direction: row;
-    justify-content: start;
-    align-items: start;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(25rem, 1fr));
     gap: 1rem;
+    width: 100%;
   }
 </style>
