@@ -1,5 +1,6 @@
 <script lang="ts">
   const id: string = Math.random().toString(36).substring(2, 9)
+  export let type: 'text' | 'password' = 'text'
   export let label: string
   export let value: string
   export let placeholder: string = ''
@@ -14,7 +15,11 @@
 
 <div class="control">
   <label class="label" for={id}>{label}</label>
-  <input class="input" {id} bind:value {placeholder} on:keyup={onKeyUp} />
+  {#if type === 'text'}
+    <input class="input" {id} bind:value {placeholder} on:keyup={onKeyUp} />
+  {:else if type === 'password'}
+    <input class="input" {id} bind:value {placeholder} type="password" on:keyup={onKeyUp} />
+  {/if}
 </div>
 
 <style>

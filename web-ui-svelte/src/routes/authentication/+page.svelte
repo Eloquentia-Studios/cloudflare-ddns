@@ -17,7 +17,7 @@
 </script>
 
 <div class="form">
-  <Input label="Password" bind:value={password} {onSubmit} />
+  <Input type="password" label="Password" bind:value={password} {onSubmit} />
   <Button on:click={onSubmit}>Sign in</Button>
 </div>
 
