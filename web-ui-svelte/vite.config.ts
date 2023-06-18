@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [sveltekit()],
   server: {
     proxy: {
-      '/api': {
+      '/trpc': {
         target: 'http://localhost:1470',
         changeOrigin: true
       }
