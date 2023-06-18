@@ -18,7 +18,7 @@ if (!valid) {
 }
 
 // Get all Cloudflare data.
-//let cloudflareData = await getCloudflareData(API_KEY)
+//let cloudflareData = await getZonesAndRecords(API_KEY)
 //let ip = await getPublicIP()
 
 console.log('Welcome to Cloudflare DDNS!')

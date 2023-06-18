@@ -10,6 +10,7 @@ import type CloudflareZone from '../types/CloudflareZone.d'
  * @param {string} token - The API token to verify.
  *
  * @returns {Promise<boolean>} - Whether the token is valid.
+ * @throws {Error} - If the request fails.
  */
 export const verifyToken = async (token: string): Promise<boolean> => (await request(token, 'GET', 'user/tokens/verify')).ok
 
@@ -43,21 +44,22 @@ export const getRecords = async (token: string, zoneId: string): Promise<Cloudfl
 }
 
 /**
- * Get all Cloudflare data.
+ * Get all Zones with their DNS records from Cloudflare.
  *
  * @param {string} token - The API token to use.
  *
  * @returns {Promise<object>} - The Cloudflare data.
  */
-export const getCloudflareData = async (token: string): Promise<object> => {
+export const getZonesAndRecords = async (token: string): Promise<(CloudflareZone & { records: CloudflareDnsRecord[] })[]> => {
   const zones = await getZones(token)
+  const data: (CloudflareZone & { records: CloudflareDnsRecord[] })[] = []
 
-  const records: CloudflareDnsRecord[] = []
   for (const zone of zones) {
-    records.push(...(await getRecords(token, zone.id)))
+    const zoneRecords = await getRecords(token, zone.id)
+    data.push({ ...zone, records: zoneRecords })
   }
 
-  return { zones, records }
+  return data
 }
 
 /**
