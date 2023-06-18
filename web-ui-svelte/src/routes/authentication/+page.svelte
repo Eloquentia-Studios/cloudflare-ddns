@@ -1,8 +1,15 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
   import Button from '../../components/Button.svelte'
   import Input from '../../components/Input.svelte'
-  import { login } from '../../services/authentication'
+  import { checkAuthentication, login } from '../../services/authentication'
 
+  // Check if client is already authenticated.
+  onMount(async () => {
+    if (await checkAuthentication()) window.location.href = '/'
+  })
+
+  // Submit login form.
   let password: string = ''
   const onSubmit = async () => {
     if (await login(password)) window.location.href = '/'
