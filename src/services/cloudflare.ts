@@ -53,6 +53,14 @@ export const getZonesAndRecords = async (): Promise<(CloudflareZone & { records:
 }
 
 /**
+ * Get all Zones with the number of DNS records from Cloudflare.
+ */
+export const getZonesAndRecordCounts = async (): Promise<(CloudflareZone & { recordCount: number })[]> => {
+  const zonesAndRecords = await getZonesAndRecords()
+  return zonesAndRecords.map((zone) => ({ ...zone, recordCount: zone.records.length }))
+}
+
+/**
  * Send authenticated requests to the Cloudflare API.
  */
 let cache: Map<string, { result: any; time: Date }> = new Map()

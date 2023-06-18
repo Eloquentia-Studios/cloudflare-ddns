@@ -8,7 +8,7 @@
   <div class="info">
     <p id="id">{zone.id}</p>
     <p id="name">{zone.name}</p>
-    <p id="records">{zone.id} record(s)</p>
+    <p id="records">{zone.recordCount} record(s)</p>
   </div>
   <div class="arrow" />
 </a>

@@ -1,10 +1,10 @@
 import authenticatedProcedure from '../procedures/authenticatedProcedure.js'
-import { getZones } from '../services/cloudflare.js'
+import { getZonesAndRecordCounts } from '../services/cloudflare.js'
 import { t } from '../services/trpc.js'
 
 const zoneRouter = t.router({
   getZones: authenticatedProcedure.query(async () => {
-    return await getZones()
+    return await getZonesAndRecordCounts()
   })
 })
 
