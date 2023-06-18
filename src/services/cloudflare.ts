@@ -12,14 +12,10 @@ import type CloudflareZone from '../types/CloudflareZone.d'
  * @returns {Promise<boolean>} - Whether the token is valid.
  * @throws {Error} - If the request fails.
  */
-export const verifyToken = async (token: string): Promise<boolean> => {
-  try {
-    request('GET', 'user/tokens/verify', undefined, undefined, token, 0)
-    return true
-  } catch {
-    return false
-  }
-}
+export const verifyToken = async (token: string): Promise<boolean> =>
+  request('GET', 'user/tokens/verify', undefined, undefined, token, 0)
+    .then(() => true)
+    .catch(() => false)
 
 /**
  * Get all zones from Cloudflare.
