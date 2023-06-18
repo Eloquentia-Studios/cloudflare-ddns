@@ -1,7 +1,7 @@
-import ipCheckedProcedure from '../../middleware/checkIP.js'
+import standardProcedure from '../../procedures/standardProcedure.js'
 import { verifyToken } from '../../services/token.js'
 
-const routeAuthenticationCheck = ipCheckedProcedure.query(({ ctx }) => {
+const routeAuthenticationCheck = standardProcedure.query(({ ctx }) => {
   const token = ctx.req.headers.authorization
   if (!token) return false
 

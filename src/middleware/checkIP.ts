@@ -8,5 +8,4 @@ const checkIP = t.middleware(async ({ ctx, next }) => {
   return next({ ctx } as { ctx: typeof ctx & { ip: string } })
 })
 
-const ipCheckedProcedure = t.procedure.use(checkIP)
-export default ipCheckedProcedure
+export default checkIP
