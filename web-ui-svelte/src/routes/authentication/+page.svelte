@@ -1,7 +1,11 @@
 <script lang="ts">
+  import { goto } from '$app/navigation'
   import Button from '../../components/Button.svelte'
   import Input from '../../components/Input.svelte'
   import { login } from '../../services/authentication'
+  import trpc from '../../services/trpc'
+
+  trpc.greeting.query().then((res) => console.log(res))
 
   // Check if client is already authenticated.
   /*onMount(async () => {
@@ -11,7 +15,7 @@
   // Submit login form.
   let password: string = ''
   const onSubmit = async () => {
-    if (await login(password)) window.location.href = '/'
+    if (await login(password)) goto('/')
   }
 </script>
 

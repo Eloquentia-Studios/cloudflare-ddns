@@ -1,11 +1,12 @@
 <script lang="ts">
+  import { goto } from '$app/navigation'
   import { onMount } from 'svelte'
   import ZoneList from '../components/ZoneList.svelte'
   import { checkAuthentication } from '../services/authentication'
 
   // Check if client is already authenticated.
   onMount(async () => {
-    if (!(await checkAuthentication())) window.location.href = '/authentication'
+    if (!(await checkAuthentication())) goto('/authentication')
   })
 </script>
 
