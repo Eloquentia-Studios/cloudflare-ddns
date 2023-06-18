@@ -1,19 +1,11 @@
+import trpc from './trpc'
+
 /**
  * Check authentication status.
  *
  * @returns True if the client is authenticated, false otherwise.
  */
-export const checkAuthentication = async () => {
-  const authHeaders = getAuthenticationHeaders()
-  if (!authHeaders.Authorization) return false
-
-  const response = await fetch('/api/authentication/check', {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json', ...authHeaders }
-  })
-
-  return response.status === 200
-}
+export const checkAuthentication = async () => await trpc.authCheck.query()
 
 /**
  * Login to the backend with the given password,
@@ -23,18 +15,8 @@ export const checkAuthentication = async () => {
  * @returns True if the login was successful, false otherwise.
  */
 export const login = async (password: string) => {
-  const response = await fetch('/api/authentication/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ password })
-  })
-
-  if (response.status === 200) {
-    const { token } = await response.json()
-    return saveToken(token)
-  }
-
-  return false
+  const token = await trpc.authLogin.mutate(password)
+  return saveToken(token)
 }
 
 /**
