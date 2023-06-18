@@ -12,6 +12,7 @@
     border: 1px solid transparent;
     border-radius: 0.25rem;
     transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+    cursor: pointer;
   }
 
   button:hover {

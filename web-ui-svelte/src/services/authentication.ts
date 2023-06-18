@@ -38,14 +38,13 @@ export const login = async (password: string) => {
 }
 
 /**
- * Save token to local storage.
+ * Get authentication headers.
  *
- * @param token Token to save.
- * @returns True if the token was saved, false otherwise.
+ * @returns Authentication headers.
  */
-const saveToken = (token: string) => {
-  localStorage.setItem('token', token)
-  return true
+export const getAuthenticationHeaders = () => {
+  const token = getToken()
+  return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
 /**
@@ -59,11 +58,16 @@ const getToken = () => {
 }
 
 /**
- * Get authentication headers.
+ * Save token to local storage.
  *
- * @returns Authentication headers.
+ * @param token Token to save.
+ * @returns True if the token was saved, false otherwise.
  */
-export const getAuthenticationHeaders = () => {
-  const token = getToken()
-  return token ? { Authorization: `Bearer ${token}` } : {}
+const saveToken = (token: string) => {
+  try {
+    localStorage.setItem('token', token)
+    return true
+  } catch {
+    return false
+  }
 }
