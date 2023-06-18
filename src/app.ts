@@ -1,7 +1,6 @@
-import { config } from 'dotenv'
+import 'dotenv/config'
 import { verifyToken } from './services/cloudflare.js'
 import './services/express.js'
-config()
 
 // Get the API key from the environment variables.
 const API_KEY = process.env.CLOUDFLARE_API_KEY
