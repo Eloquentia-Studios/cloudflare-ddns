@@ -1,11 +1,18 @@
 <script lang="ts">
+  import trpc from '../services/trpc'
   import ZoneItem from './ZoneItem.svelte'
+
+  const zones = trpc.getZones.query()
 </script>
 
 <div class="container">
-  {#each Array(51) as z}
-    <ZoneItem />
-  {/each}
+  {#await zones}
+    <i>Loading...</i>
+  {:then zones}
+    {#each zones as zone}
+      <ZoneItem {zone} />
+    {/each}
+  {/await}
 </div>
 
 <style>

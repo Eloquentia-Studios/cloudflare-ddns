@@ -1,20 +1,14 @@
 <script lang="ts">
-  let zone: {
-    id: string
-    name: string
-    records: number
-  } = {
-    id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
-    name: 'example.com',
-    records: Math.floor(Math.random() * 100)
-  }
+  import type { RouterOutput } from '../services/trpc'
+
+  export let zone: RouterOutput['getZones'][number]
 </script>
 
 <a class="container" href="./{zone.id}/">
   <div class="info">
     <p id="id">{zone.id}</p>
     <p id="name">{zone.name}</p>
-    <p id="records">{zone.records} record(s)</p>
+    <p id="records">{zone.id} record(s)</p>
   </div>
   <div class="arrow" />
 </a>
