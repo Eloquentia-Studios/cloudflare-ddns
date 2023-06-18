@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import ZoneItem from './ZoneItem.svelte'
 </script>
 
