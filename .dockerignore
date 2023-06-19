@@ -21,6 +21,8 @@ coverage
 
 # API keys and secrets
 .env
+.env.*
+!.env.example
 
 # Dependency directory
 node_modules
@@ -40,4 +42,9 @@ dist/**/*
 # ignore yarn.lock
 yarn.lock
 
-data/**/*
+web-ui-svelte/.svelte-kit
+web-ui-svelte/package
+.vercel
+.output
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*

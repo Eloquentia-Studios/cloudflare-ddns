@@ -9,7 +9,8 @@ RUN pnpm i --frozen-lockfile
 RUN pnpm run build
 
 # Build frontend
-RUN cd web-ui-svelte
+WORKDIR /app/web-ui-svelte
+RUN rm -rf build
 RUN pnpm i --frozen-lockfile
 RUN pnpm run build
 
