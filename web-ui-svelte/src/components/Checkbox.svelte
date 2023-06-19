@@ -6,7 +6,7 @@
 </script>
 
 <input type="checkbox" {id} {disabled} bind:checked />
-<label for={id} />
+<label for={id} on:click on:keydown />
 
 <style>
   input[type='checkbox'] {

@@ -1,7 +1,7 @@
 import standardProcedure from '../../procedures/standardProcedure.js'
 import { verifyToken } from '../../services/token.js'
 
-const routeAuthenticationCheck = standardProcedure.query(({ ctx }) => {
+const authCheck = standardProcedure.query(({ ctx }) => {
   const token = ctx.req.headers.authorization
   if (!token) return false
 
@@ -11,4 +11,4 @@ const routeAuthenticationCheck = standardProcedure.query(({ ctx }) => {
   return true
 })
 
-export default routeAuthenticationCheck
+export default authCheck

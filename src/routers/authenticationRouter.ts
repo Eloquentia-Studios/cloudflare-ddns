@@ -1,10 +1,10 @@
-import routeAuthenticationCheck from '../routes/authentication/check.js'
-import routeAuthenticationLogin from '../routes/authentication/login.js'
+import authCheck from '../routes/authentication/authCheck.js'
+import authLogin from '../routes/authentication/authLogin.js'
 import { t } from '../services/trpc.js'
 
 const authenticationRouter = t.router({
-  authLogin: routeAuthenticationLogin,
-  authCheck: routeAuthenticationCheck
+  authLogin,
+  authCheck
 })
 
 export default authenticationRouter

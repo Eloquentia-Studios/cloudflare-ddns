@@ -6,7 +6,7 @@
   "main": "app.js",
   "scripts": {
     "watch": "tsc --watch",
-    "dev": "nodemon ./dist/app.js",
+    "dev": "nodemon ./dist/app.js --ignore ./data",
     "build": "tsc",
     "start": "node ./dist/app.js"
   },
@@ -27,6 +27,7 @@
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",
     "node-fetch": "^3.3.1",
+    "public-ip": "^6.0.1",
     "zod": "^3.21.4"
   }
 }
