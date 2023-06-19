@@ -22,18 +22,38 @@ export const verifyToken = async (token: string): Promise<boolean> =>
  *
  * @returns {Promise<object[]>} - The zones.
  */
-export const getZones = async (): Promise<CloudflareZone[]> => {
-  return await request<CloudflareZone[]>('GET', 'zones')
-}
+export const getZones = async (): Promise<CloudflareZone[]> => request<CloudflareZone[]>('GET', 'zones')
+
+/**
+ * Get a zone from Cloudflare.
+ */
+export const getZone = async (zoneId: string): Promise<CloudflareZone> => request<CloudflareZone>('GET', `zones/${zoneId}`)
+
+/**
+ * Check if a zone exists on Cloudflare.
+ */
+export const zoneExists = async (zoneId: string): Promise<boolean> =>
+  getZone(zoneId)
+    .then(() => true)
+    .catch(() => false)
 
 /**
  * Get all DNS records for a zone from Cloudflare.
- *
- * @param {string} zoneId - The zone ID to use.
  */
-export const getRecords = async (zoneId: string): Promise<CloudflareDnsRecord[]> => {
-  return await request<CloudflareDnsRecord[]>('GET', `zones/${zoneId}/dns_records`)
-}
+export const getRecords = async (zoneId: string): Promise<CloudflareDnsRecord[]> => request<CloudflareDnsRecord[]>('GET', `zones/${zoneId}/dns_records`)
+
+/**
+ * Get a DNS record for a zone from Cloudflare.
+ */
+export const getRecord = async (zoneId: string, recordId: string): Promise<CloudflareDnsRecord> => request<CloudflareDnsRecord>('GET', `zones/${zoneId}/dns_records/${recordId}`)
+
+/**
+ * Check if a DNS record exists on Cloudflare.
+ */
+export const recordExists = async (zoneId: string, recordId: string): Promise<boolean> =>
+  getRecord(zoneId, recordId)
+    .then(() => true)
+    .catch(() => false)
 
 /**
  * Get all Zones with their DNS records from Cloudflare.

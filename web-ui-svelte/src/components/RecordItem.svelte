@@ -1,8 +1,16 @@
 <script lang="ts">
   import type { RouterOutput } from '../services/trpc'
+  import trpc from '../services/trpc'
   import Checkbox from './Checkbox.svelte'
 
   export let record: RouterOutput['getRecords'][number]
+
+  let ddnsStatus = false
+  const toggleDDNSStatus = async () => {
+    console.log(!ddnsStatus)
+    const response = await trpc.updateRecordDDNSStatus.mutate({ zoneId: record.zone_id, recordId: record.id, ddnsStatus: !ddnsStatus })
+    console.log(response)
+  }
 </script>
 
 <div class="container">
@@ -21,7 +29,7 @@
   </div>
 
   <div class="toggle">
-    <Checkbox disabled={record.locked} checked={Math.random() > 0.8 && !record.locked} />
+    <Checkbox disabled={record.locked} bind:checked={ddnsStatus} on:click={toggleDDNSStatus} />
   </div>
 </div>
 
