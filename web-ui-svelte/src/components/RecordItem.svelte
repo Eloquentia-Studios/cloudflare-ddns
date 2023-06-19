@@ -5,6 +5,7 @@
 
   export let record: RouterOutput['getRecords'][number]
 
+  let ddnsDisabled = record.locked || !['A', 'AAAA'].includes(record.type)
   let ddnsStatus = record.ddnsStatus
   const toggleDDNSStatus = () => trpc.updateRecordDDNSStatus.mutate({ zoneId: record.zone_id, recordId: record.id, ddnsStatus: !ddnsStatus })
 </script>
@@ -25,7 +26,7 @@
   </div>
 
   <div class="toggle">
-    <Checkbox disabled={record.locked} bind:checked={ddnsStatus} on:click={toggleDDNSStatus} />
+    <Checkbox disabled={ddnsDisabled} bind:checked={ddnsStatus} on:click={toggleDDNSStatus} />
   </div>
 </div>
 

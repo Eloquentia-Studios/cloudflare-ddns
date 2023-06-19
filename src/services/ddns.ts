@@ -76,6 +76,7 @@ const runDDNS = async () => {
 
     const record = await getRecord(zoneId, recordId)
     if (record.content === ip) continue
+    if (!['A', 'AAAA'].includes(record.type)) continue
 
     console.info(`Updating ${record.name} (${record.content}) to ${ip}.`)
     await updateRecord(zoneId, recordId, { type: record.type, name: record.name, content: ip, ttl: record.ttl, proxied: record.proxied })
