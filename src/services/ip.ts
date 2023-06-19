@@ -32,7 +32,7 @@ const savePublicIP = () => {
 }
 
 const loadPublicIP = async () => {
-  if (!(await fileExists(PublicIPPath))) return
+  if (!(await fileExists(PublicIPPath))) return getPublicIP()
 
   const data = await readFile(PublicIPPath, 'utf-8')
   const parsedData = JSON.parse(data)

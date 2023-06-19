@@ -1,8 +1,8 @@
 import type { Response } from 'node-fetch'
 import fetch from 'node-fetch'
-import type CloudflareDnsRecord from '../types/CloudflareDnsRecord.d'
-import type CloudflareResponse from '../types/CloudflareResponse.d'
-import type CloudflareZone from '../types/CloudflareZone.d'
+import type CloudflareDnsRecord from '../types/CloudflareDnsRecord.d.ts'
+import type CloudflareResponse from '../types/CloudflareResponse.d.ts'
+import type CloudflareZone from '../types/CloudflareZone.d.ts'
 import { getRecordDDNSStatus } from './ddns.js'
 
 /**
