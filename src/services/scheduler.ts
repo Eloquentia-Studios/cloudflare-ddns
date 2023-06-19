@@ -1,4 +1,4 @@
-import type ScheduledTask from '../types/ScheduledTask.d'
+import type ScheduledTask from '../types/ScheduledTask.d.ts'
 
 // List of scheduled tasks.
 const tasks: ScheduledTask[] = []
@@ -53,7 +53,7 @@ const runTask = (task: ScheduledTask) => {
   task
     .task()
     .then(() => taskSuccess(task))
-    .catch((reason) => taskFailed(task, reason))
+    .catch((reason: any) => taskFailed(task, reason))
 }
 
 /**
