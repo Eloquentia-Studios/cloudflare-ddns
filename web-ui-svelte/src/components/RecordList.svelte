@@ -1,11 +1,19 @@
 <script lang="ts">
+  import trpc from '../services/trpc'
   import RecordItem from './RecordItem.svelte'
+
+  export let zoneId: string
+  const records = trpc.getRecords.query(zoneId)
 </script>
 
 <div class="container">
-  {#each Array(16) as z}
-    <RecordItem />
-  {/each}
+  {#await records}
+    <i>Loading...</i>
+  {:then records}
+    {#each records as record}
+      <RecordItem {record} />
+    {/each}
+  {/await}
 </div>
 
 <style>
