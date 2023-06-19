@@ -3,7 +3,7 @@
 </script>
 
 <div class="container">
-  <Logo />
+  <a href="/"><Logo /></a>
   <div>
     <p>Status: Good</p>
     <p>157.84.89.148</p>
@@ -23,6 +23,11 @@
 
     background-color: #fff;
     box-shadow: 0 0 0.5rem 0.25rem rgba(0, 0, 0, 0.05);
+  }
+
+  .container > a {
+    height: 100%;
+    width: 13rem;
   }
 
   .container > div {
