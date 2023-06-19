@@ -1,24 +1,9 @@
-import { config } from 'dotenv'
-import getPublicIP from './libs/getPublicIP.js'
-import { getCloudflareData, verifyToken } from './services/cloudflare.js'
-config()
-
-// Get the API key from the environment variables.
-const API_KEY = process.env.CLOUDFLARE_API_KEY
-if (!API_KEY) {
-  console.error('No Cloudflare API key found in environment variables.')
-  process.exit(1)
-}
-
-// Verify the API key.
-const valid = await verifyToken(API_KEY)
-if (!valid) {
-  console.error('Invalid Cloudflare API key.')
-  process.exit(1)
-}
+import 'dotenv/config'
+import './services/cloudflare.js'
+import './services/express.js'
 
 // Get all Cloudflare data.
-let cloudflareData = await getCloudflareData(API_KEY)
-let ip = await getPublicIP()
+//let cloudflareData = await getZonesAndRecords(API_KEY)
+//let ip = await getPublicIP()
 
 console.log('Welcome to Cloudflare DDNS!')

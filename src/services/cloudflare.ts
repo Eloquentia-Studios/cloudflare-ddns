@@ -1,7 +1,7 @@
 import type { Response } from 'node-fetch'
 import fetch from 'node-fetch'
 import type CloudflareDnsRecord from '../types/CloudflareDnsRecord.d'
-import type CloudflareZoneListResponse from '../types/CloudflareResponse'
+import type CloudflareResponse from '../types/CloudflareResponse.d'
 import type CloudflareZone from '../types/CloudflareZone.d'
 
 /**
@@ -10,68 +10,81 @@ import type CloudflareZone from '../types/CloudflareZone.d'
  * @param {string} token - The API token to verify.
  *
  * @returns {Promise<boolean>} - Whether the token is valid.
+ * @throws {Error} - If the request fails.
  */
-export const verifyToken = async (token: string): Promise<boolean> => (await request(token, 'GET', 'user/tokens/verify')).ok
+export const verifyToken = async (token: string): Promise<boolean> =>
+  request('GET', 'user/tokens/verify', undefined, undefined, token, 0)
+    .then(() => true)
+    .catch(() => false)
 
 /**
  * Get all zones from Cloudflare.
  *
- * @param {string} token - The API token to use.
- *
  * @returns {Promise<object[]>} - The zones.
  */
-export const getZones = async (token: string): Promise<CloudflareZone[]> => {
-  const response = await request(token, 'GET', 'zones')
-  if (!response.ok) throw new Error('Failed to get zones from Cloudflare.')
-
-  const zoneResponse = (await response.json()) as CloudflareZoneListResponse<CloudflareZone[]>
-  return zoneResponse.result
+export const getZones = async (): Promise<CloudflareZone[]> => {
+  return await request<CloudflareZone[]>('GET', 'zones')
 }
 
 /**
  * Get all DNS records for a zone from Cloudflare.
  *
- * @param {string} token - The API token to use.
  * @param {string} zoneId - The zone ID to use.
  */
-export const getRecords = async (token: string, zoneId: string): Promise<CloudflareDnsRecord[]> => {
-  const response = await request(token, 'GET', `zones/${zoneId}/dns_records`)
-  if (!response.ok) throw new Error('Failed to get DNS records from Cloudflare.')
-
-  const recordResponse = (await response.json()) as CloudflareZoneListResponse<CloudflareDnsRecord[]>
-  return recordResponse.result
+export const getRecords = async (zoneId: string): Promise<CloudflareDnsRecord[]> => {
+  return await request<CloudflareDnsRecord[]>('GET', `zones/${zoneId}/dns_records`)
 }
 
 /**
- * Get all Cloudflare data.
+ * Get all Zones with their DNS records from Cloudflare.
  *
- * @param {string} token - The API token to use.
- *
- * @returns {Promise<object>} - The Cloudflare data.
+ * @returns {Promise<any>} - The Cloudflare data.
  */
-export const getCloudflareData = async (token: string): Promise<object> => {
-  const zones = await getZones(token)
+export const getZonesAndRecords = async (): Promise<(CloudflareZone & { records: CloudflareDnsRecord[] })[]> => {
+  const zones = await getZones()
+  const data: (CloudflareZone & { records: CloudflareDnsRecord[] })[] = []
 
-  const records: CloudflareDnsRecord[] = []
   for (const zone of zones) {
-    records.push(...(await getRecords(token, zone.id)))
+    const zoneRecords = await getRecords(zone.id)
+    data.push({ ...zone, records: zoneRecords })
   }
 
-  return { zones, records }
+  return data
+}
+
+/**
+ * Get all Zones with the number of DNS records from Cloudflare.
+ */
+export const getZonesAndRecordCounts = async (): Promise<(CloudflareZone & { recordCount: number })[]> => {
+  const zonesAndRecords = await getZonesAndRecords()
+  return zonesAndRecords.map((zone) => ({ ...zone, recordCount: zone.records.length }))
 }
 
 /**
  * Send authenticated requests to the Cloudflare API.
- *
- * @param {string} token - The API token to use.
- * @param {string} method - The HTTP method to use.
- * @param {string} endpoint - The API endpoint to use.
- * @param {object} [headers] - The request headers.
- * @param {object} [body] - The request body.
- *
- * @returns {Promise<Response>} - The response body.
  */
-const request = async (token: string, method: string, endpoint: string, headers?: object, body?: object): Promise<Response> => {
+let cache: Map<string, { result: any; time: Date }> = new Map()
+const request = async <T>(method: string, endpoint: string, headers?: object, body?: object, token?: string, cacheTimeSeconds: number = 60 * 5): Promise<T> => {
+  const cacheExists = cache.has(endpoint)
+  const cacheExpired = cacheExists && cache.get(endpoint)!.time.getTime() < Date.now() - 1000 * cacheTimeSeconds
+  if (cacheExists && !cacheExpired) return cache.get(endpoint)!.result
+
+  const response = await retriedRequest(method, endpoint, headers, body, token)
+
+  if (!response) throw new Error('Failed to send request to Cloudflare API.')
+  if (!response.ok) throw new Error(`Failed to send request to Cloudflare API on path ${endpoint} with status ${response.status}.`)
+
+  const json = (await response.json()) as CloudflareResponse<T>
+
+  if (cacheTimeSeconds > 0) cache.set(endpoint, { result: json.result, time: new Date() })
+  return json.result
+}
+
+/**
+ * Send multiple requests to the Cloudflare API until one succeeds
+ * or the maximum number of tries is reached.
+ */
+const retriedRequest = async (method: string, endpoint: string, headers?: object, body?: object, token?: string) => {
   let response: Response | undefined
   let tries = 0
 
@@ -80,7 +93,7 @@ const request = async (token: string, method: string, endpoint: string, headers?
       response = await fetch(`https://api.cloudflare.com/client/v4/${endpoint}`, {
         method,
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${token ?? API_KEY}`,
           'Content-Type': 'application/json',
           ...headers
         },
@@ -92,6 +105,26 @@ const request = async (token: string, method: string, endpoint: string, headers?
     }
   }
 
-  if (!response) throw new Error('Failed to send request to Cloudflare API.')
   return response
 }
+
+/**
+ * Load the API key from the .env file.
+ */
+const API_KEY = await (async () => {
+  // Get the API key from the environment variables.
+  const API_KEY = process.env.CLOUDFLARE_API_KEY
+  if (!API_KEY) {
+    console.error('No Cloudflare API key found in environment variables.')
+    process.exit(1)
+  }
+
+  // Verify the API key.
+  const valid = await verifyToken(API_KEY)
+  if (!valid) {
+    console.error('Invalid Cloudflare API key.')
+    process.exit(1)
+  }
+
+  return API_KEY
+})()
