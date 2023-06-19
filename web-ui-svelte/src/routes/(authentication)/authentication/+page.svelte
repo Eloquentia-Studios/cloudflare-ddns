@@ -1,8 +1,8 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
-  import Button from '../../components/Button.svelte'
-  import Input from '../../components/Input.svelte'
-  import { login } from '../../services/authentication'
+  import Button from '../../../components/Button.svelte'
+  import Input from '../../../components/Input.svelte'
+  import { login } from '../../../services/authentication'
 
   let password: string = ''
   const onSubmit = async () => {

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { ScaleOut } from 'svelte-loading-spinners'
   import trpc from '../services/trpc'
   import RecordItem from './RecordItem.svelte'
 
@@ -8,7 +9,7 @@
 
 <div class="container">
   {#await records}
-    <i>Loading...</i>
+    <div class="center"><ScaleOut /></div>
   {:then records}
     {#each records as record}
       <RecordItem {record} />
