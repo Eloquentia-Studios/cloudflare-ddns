@@ -41,7 +41,7 @@ const runTask = (task: ScheduledTask) => {
   task
     .task()
     .then(() => taskSuccess(task))
-    .catch(() => taskFailed(task))
+    .catch((reason) => taskFailed(task, reason))
 }
 
 /**
@@ -56,7 +56,8 @@ const taskSuccess = (task: ScheduledTask) => (task.timeoutId = setTimeout(() => 
  *
  * @param task The task that failed.
  */
-const taskFailed = (task: ScheduledTask) => {
+const taskFailed = (task: ScheduledTask, reason: any) => {
   console.error(`Task ${task.name} failed to run.`)
+  console.error(reason)
   task.timeoutId = setTimeout(() => runTask(task), task.retryInterval)
 }

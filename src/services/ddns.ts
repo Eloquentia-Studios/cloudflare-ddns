@@ -1,6 +1,9 @@
 import { readFile, writeFile } from 'fs/promises'
+import { publicIpv4 } from 'public-ip'
 import { z } from 'zod'
 import fileExists from '../libs/fileExists.js'
+import { getRecord, recordExists, updateRecord } from './cloudflare.js'
+import { addTask } from './scheduler.js'
 
 const DDNSRecordsPath = (process.env.DATA_DIR ?? './data') + '/ddns.json'
 
@@ -34,6 +37,7 @@ const initDDNSRecordsSave = () => {
 }
 
 const combineRecordKey = (zoneId: string, recordId: string) => `${zoneId}:${recordId}`
+const splitRecordKey = (recordKey: string) => recordKey.split(':')
 
 const loadDDNSRecords = async () => {
   if (!(await fileExists(DDNSRecordsPath))) return []
@@ -47,7 +51,7 @@ const loadDDNSRecords = async () => {
 
 const saveDDNSRecords = () => {
   const ddnsRecords: DDNSRecord[] = Array.from(DDNSRecords).map((recordKey) => {
-    const [zoneId, recordId] = recordKey.split(':')
+    const [zoneId, recordId] = splitRecordKey(recordKey)
     return { zoneId, recordId }
   })
 
@@ -55,3 +59,32 @@ const saveDDNSRecords = () => {
 }
 
 loadDDNSRecords()
+
+const runDDNS = async () => {
+  const ip = await publicIpv4()
+
+  for (const recordKey of DDNSRecords) {
+    const [zoneId, recordId] = splitRecordKey(recordKey)
+
+    if (!(await recordExists(zoneId, recordId))) {
+      updateRecordDDNSStatus(zoneId, recordId, false)
+      continue
+    }
+
+    const record = await getRecord(zoneId, recordId)
+    if (record.content === ip) continue
+
+    console.info(`Updating ${record.name} (${record.content}) to ${ip}.`)
+    await updateRecord(zoneId, recordId, { type: record.type, name: record.name, content: ip, ttl: record.ttl, proxied: record.proxied })
+    console.info(`Updated ${record.name} (${record.content}) to ${ip}.`)
+  }
+}
+
+addTask({
+  name: 'DDNS',
+  onStartup: true,
+  startupOffset: 10 * 1000,
+  interval: 5 * 60 * 1000,
+  retryInterval: 30 * 1000,
+  task: runDDNS
+})
