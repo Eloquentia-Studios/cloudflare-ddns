@@ -1,13 +1,30 @@
-<script>
+<script lang="ts">
+  import dayjs from 'dayjs'
+  import relativeTime from 'dayjs/plugin/relativeTime'
+  import { onDestroy } from 'svelte'
+  import trpc from '../services/trpc'
   import Logo from './Logo.svelte'
+
+  dayjs.extend(relativeTime)
+
+  let interval: NodeJS.Timeout | undefined
+  const ip = trpc.getPublicIP.query()
+  let displayTimeOfIPChange = '...'
+  trpc.getTimeOfLastIPChange.query().then((timeOfIPChange) => {
+    const update = () => (displayTimeOfIPChange = dayjs(timeOfIPChange).fromNow())
+    interval = setInterval(update, 15 * 1000)
+    update()
+  })
+
+  onDestroy(() => clearInterval(interval))
 </script>
 
 <div class="container">
-  <Logo />
+  <a href="/"><Logo /></a>
   <div>
-    <p>Status: Good</p>
-    <p>157.84.89.148</p>
-    <p>5 days ago</p>
+    <p>Welcome!</p>
+    <p>{#await ip}<i>...</i>{:then ip}{ip}{/await}</p>
+    <p>{displayTimeOfIPChange}</p>
   </div>
 </div>
 
@@ -23,6 +40,11 @@
 
     background-color: #fff;
     box-shadow: 0 0 0.5rem 0.25rem rgba(0, 0, 0, 0.05);
+  }
+
+  .container > a {
+    height: 100%;
+    width: 13rem;
   }
 
   .container > div {

@@ -1,19 +1,20 @@
 <script lang="ts">
+  import { ScaleOut } from 'svelte-loading-spinners'
   import trpc from '../services/trpc'
   import ZoneItem from './ZoneItem.svelte'
 
   const zones = trpc.getZones.query()
 </script>
 
-<div class="container">
-  {#await zones}
-    <i>Loading...</i>
-  {:then zones}
+{#await zones}
+  <div class="center"><ScaleOut /></div>
+{:then zones}
+  <div class="container">
     {#each zones as zone}
       <ZoneItem {zone} />
     {/each}
-  {/await}
-</div>
+  </div>
+{/await}
 
 <style>
   .container {
