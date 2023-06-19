@@ -5,12 +5,8 @@
 
   export let record: RouterOutput['getRecords'][number]
 
-  let ddnsStatus = false
-  const toggleDDNSStatus = async () => {
-    console.log(!ddnsStatus)
-    const response = await trpc.updateRecordDDNSStatus.mutate({ zoneId: record.zone_id, recordId: record.id, ddnsStatus: !ddnsStatus })
-    console.log(response)
-  }
+  let ddnsStatus = record.ddnsStatus
+  const toggleDDNSStatus = () => trpc.updateRecordDDNSStatus.mutate({ zoneId: record.zone_id, recordId: record.id, ddnsStatus: !ddnsStatus })
 </script>
 
 <div class="container">

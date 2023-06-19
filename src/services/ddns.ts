@@ -24,6 +24,8 @@ export const updateRecordDDNSStatus = async (zoneId: string, recordId: string, d
   initDDNSRecordsSave()
 }
 
+export const getRecordDDNSStatus = (zoneId: string, recordId: string) => DDNSRecords.has(combineRecordKey(zoneId, recordId))
+
 let DDNSRecordsSaveTimeout: NodeJS.Timeout | undefined
 const initDDNSRecordsSave = () => {
   if (DDNSRecordsSaveTimeout) clearTimeout(DDNSRecordsSaveTimeout)

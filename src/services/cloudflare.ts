@@ -3,6 +3,7 @@ import fetch from 'node-fetch'
 import type CloudflareDnsRecord from '../types/CloudflareDnsRecord.d'
 import type CloudflareResponse from '../types/CloudflareResponse.d'
 import type CloudflareZone from '../types/CloudflareZone.d'
+import { getRecordDDNSStatus } from './ddns.js'
 
 /**
  * Verify an API token with Cloudflare.
@@ -40,12 +41,26 @@ export const zoneExists = async (zoneId: string): Promise<boolean> =>
 /**
  * Get all DNS records for a zone from Cloudflare.
  */
-export const getRecords = async (zoneId: string): Promise<CloudflareDnsRecord[]> => request<CloudflareDnsRecord[]>('GET', `zones/${zoneId}/dns_records`)
+export const getRecords = async (zoneId: string): Promise<(CloudflareDnsRecord & { ddnsStatus: boolean })[]> => {
+  const records = await request<CloudflareDnsRecord[]>('GET', `zones/${zoneId}/dns_records`)
+
+  return records.map((record) => ({
+    ...record,
+    ddnsStatus: getRecordDDNSStatus(zoneId, record.id)
+  }))
+}
 
 /**
  * Get a DNS record for a zone from Cloudflare.
  */
-export const getRecord = async (zoneId: string, recordId: string): Promise<CloudflareDnsRecord> => request<CloudflareDnsRecord>('GET', `zones/${zoneId}/dns_records/${recordId}`)
+export const getRecord = async (zoneId: string, recordId: string): Promise<CloudflareDnsRecord & { ddnsStatus: boolean }> => {
+  const record = await request<CloudflareDnsRecord>('GET', `zones/${zoneId}/dns_records/${recordId}`)
+
+  return {
+    ...record,
+    ddnsStatus: getRecordDDNSStatus(zoneId, record.id)
+  }
+}
 
 /**
  * Check if a DNS record exists on Cloudflare.
