@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { setErrorToast, setSuccessToast, showLoadingToast } from '../services/toast'
   import type { RouterOutput } from '../services/trpc'
   import trpc from '../services/trpc'
   import Checkbox from './Checkbox.svelte'
@@ -7,7 +8,20 @@
 
   let ddnsDisabled = record.locked || !['A', 'AAAA'].includes(record.type)
   let ddnsStatus = record.ddnsStatus
-  const toggleDDNSStatus = () => trpc.updateRecordDDNSStatus.mutate({ zoneId: record.zone_id, recordId: record.id, ddnsStatus: !ddnsStatus })
+  const toggleDDNSStatus = async () => {
+    if (ddnsDisabled) return
+
+    const id = showLoadingToast('Updating DDNS status...')
+    ddnsDisabled = true
+    trpc.updateRecordDDNSStatus
+      .mutate({ zoneId: record.zone_id, recordId: record.id, ddnsStatus: !ddnsStatus })
+      .then(() => {
+        ddnsStatus = !ddnsStatus
+        setSuccessToast(id, 'DDNS status updated!')
+      })
+      .catch(() => setErrorToast(id, 'Failed to update DDNS status!'))
+      .finally(() => (ddnsDisabled = false))
+  }
 
   const rewriteRecordType = (type: string) => {
     switch (type) {

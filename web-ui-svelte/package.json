@@ -24,6 +24,7 @@
   "dependencies": {
     "@sveltejs/adapter-static": "^2.0.2",
     "@trpc/client": "^10.31.0",
-    "@trpc/server": "^10.31.0"
+    "@trpc/server": "^10.31.0",
+    "@zerodevx/svelte-toast": "^0.9.3"
   }
 }
