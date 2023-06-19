@@ -14,6 +14,10 @@
 </a>
 
 <style>
+  * {
+    color: #222;
+  }
+
   .container {
     display: flex;
     flex-direction: row;
