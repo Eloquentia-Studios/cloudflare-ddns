@@ -2,7 +2,7 @@ import { readFile, writeFile } from 'fs/promises'
 import { publicIpv4 } from 'public-ip'
 import { z } from 'zod'
 import fileExists from '../libs/fileExists.js'
-import { getRecord, recordExists, updateRecord } from './cloudflare.js'
+import { getRecord, recordExists, resetCloudflareCache, updateRecord } from './cloudflare.js'
 import { addTask, runTaskNow } from './scheduler.js'
 
 const DDNSRecordsPath = (process.env.DATA_DIR ?? './data') + '/ddns.json'
@@ -64,6 +64,7 @@ loadDDNSRecords()
 
 const runDDNS = async () => {
   const ip = await publicIpv4()
+  resetCloudflareCache()
 
   for (const recordKey of DDNSRecords) {
     const [zoneId, recordId] = splitRecordKey(recordKey)
