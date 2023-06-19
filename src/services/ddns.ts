@@ -3,7 +3,7 @@ import { publicIpv4 } from 'public-ip'
 import { z } from 'zod'
 import fileExists from '../libs/fileExists.js'
 import { getRecord, recordExists, updateRecord } from './cloudflare.js'
-import { addTask } from './scheduler.js'
+import { addTask, runTaskNow } from './scheduler.js'
 
 const DDNSRecordsPath = (process.env.DATA_DIR ?? './data') + '/ddns.json'
 
@@ -33,7 +33,7 @@ let DDNSRecordsSaveTimeout: NodeJS.Timeout | undefined
 const initDDNSRecordsSave = () => {
   if (DDNSRecordsSaveTimeout) clearTimeout(DDNSRecordsSaveTimeout)
 
-  DDNSRecordsSaveTimeout = setTimeout(() => saveDDNSRecords(), 2500)
+  DDNSRecordsSaveTimeout = setTimeout(() => saveDDNSRecords(), 10000)
 }
 
 const combineRecordKey = (zoneId: string, recordId: string) => `${zoneId}:${recordId}`
@@ -56,6 +56,8 @@ const saveDDNSRecords = () => {
   })
 
   writeFile(DDNSRecordsPath, JSON.stringify(ddnsRecords), 'utf-8')
+
+  runTaskNow('DDNS')
 }
 
 loadDDNSRecords()

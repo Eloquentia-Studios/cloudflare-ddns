@@ -25,6 +25,18 @@ export const scheduleTasks = (startup: boolean) => {
 }
 
 /**
+ * Run a task immediately.
+ *
+ * @param taskName The name of the task to run.
+ */
+export const runTaskNow = (taskName: string) => {
+  const task = tasks.find((task) => task.name === taskName)
+  if (!task) throw new Error(`Task ${taskName} not found.`)
+
+  runTask(task)
+}
+
+/**
  * Run a task.
  *
  * @param task The task to run.
