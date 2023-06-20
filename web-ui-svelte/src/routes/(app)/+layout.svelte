@@ -5,7 +5,6 @@
   import { ScaleOut } from 'svelte-loading-spinners'
   import Header from '../../components/Header.svelte'
   import { checkAuthentication } from '../../services/authentication'
-  export const ssr = false
 
   let authenticating = true
   onMount(async () => {
