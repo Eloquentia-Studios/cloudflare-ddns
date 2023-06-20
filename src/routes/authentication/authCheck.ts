@@ -2,6 +2,8 @@ import standardProcedure from '../../procedures/standardProcedure.js'
 import { verifyToken } from '../../services/token.js'
 
 const authCheck = standardProcedure.query(({ ctx }) => {
+  if (!process.env.PASSWORD) return true
+
   const token = ctx.req.headers.authorization
   if (!token) return false
 
