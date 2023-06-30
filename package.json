@@ -1,6 +1,6 @@
 {
   "name": "cloudflare-ddns",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Cloudflare Dynamic DNS Docker image to automatically update many domains whenever the servers public IP changes.",
   "type": "module",
   "main": "app.js",
