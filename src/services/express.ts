@@ -16,6 +16,9 @@ app.use(
 )
 
 app.use('/', express.static('web-ui-svelte/build'))
+app.get('*', (req, res) => {
+  res.sendFile('index.html', { root: 'web-ui-svelte/build' })
+})
 
 const PORT = process.env.PORT || 1470
 app.listen(PORT, () => console.log(`Listening on port ${PORT}.`))
